@@ -1,0 +1,5 @@
+{
+  "name": "Finanças",
+  "description": "Um gerenciador financeiro pessoal completo com gráficos, categorização e importação inteligente de extratos do Nubank via IA.",
+  "requestFramePermissions": []
+}
