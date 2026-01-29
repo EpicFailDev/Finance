@@ -3,23 +3,105 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Finanças Pessoais</title>
+    <title>Organizador Financeiro | Zen</title>
+    
+    <!-- Fonts for Clarity: IBM Plex Sans for body, JetBrains Mono for numbers -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    
     <script src="https://cdn.tailwindcss.com"></script>
-  <script type="importmap">
-{
-  "imports": {
-    "@google/genai": "https://esm.sh/@google/genai@^1.38.0",
-    "react/": "https://esm.sh/react@^19.2.4/",
-    "react": "https://esm.sh/react@^19.2.4",
-    "recharts": "https://esm.sh/recharts@^3.7.0",
-    "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
-    "uuid": "https://esm.sh/uuid@^13.0.0",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.4/"
-  }
-}
-</script>
-</head>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              zen: {
+                50: '#FBFBFA',   // Paper white
+                100: '#F5F5F3',  // Stone light
+                200: '#E6E6E1',  // Border gray
+                800: '#2C2C2A',  // Deep coal
+                900: '#1A1A18',  // Absolute blackish
+                950: '#0c0c0a',  // Darker background
+              },
+              accent: {
+                blue: '#2563EB',    // Vibrant Blue
+                amber: '#F59E0B',   // Dark Amber
+                rose: '#E11D48',    // Crimson Rose
+                emerald: '#059669', // Deep Emerald
+                cyan: '#0891B2',    // Electric Cyan
+                teal: '#0D9488',    // Rich Teal
+                orange: '#EA580C',  // Sunset Orange
+              },
+              emerald: {
+                500: '#10B981',
+                600: '#059669',
+                950: '#064E3B',
+              },
+              rose: {
+                500: '#F43F5E',
+              }
+            },
+            fontFamily: {
+              sans: ['"IBM Plex Sans"', 'sans-serif'],
+              mono: ['"JetBrains Mono"', 'monospace'],
+            },
+            boxShadow: {
+              'kinetic': '12px 12px 0px rgba(0, 0, 0, 0.05)', // Brutalist shadow
+              'heavy': '0 25px 50px -12px rgba(0, 0, 0, 0.15)',
+              'vibrant-blue': '0 8px 20px -4px rgba(37, 99, 235, 0.2)',
+              'vibrant-emerald': '0 8px 20px -4px rgba(16, 185, 129, 0.2)',
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body {
+        background-color: #FBFBFA;
+        color: #1A1A18;
+        -webkit-font-smoothing: antialiased;
+      }
+      .dark body {
+        background-color: #0c0c0a; /* zen-950 */
+        color: #FBFBFA; /* zen-50 */
+      }
+      
+      /* Smooth transitions for kinetic feel */
+      .kinetic-transition {
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      
+      .kinetic-card {
+        border: 2px solid #E6E6E1;
+        background: white;
+        box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.05);
+      }
+      
+      .kinetic-card:hover {
+        transform: translate(-2px, -2px);
+        box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.08);
+      }
+
+      .btn-vibrant {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .btn-vibrant:active {
+        transform: scale(0.96);
+      }
+      
+      /* Hide scrollbar for Focus effect */
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+    </style>
+  </head>
   <body>
     <div id="root"></div>
+    <script type="module" src="/src/index.tsx"></script>
   </body>
 </html>

@@ -22,3 +22,12 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+*.csv
+*.db
+.agent/
+server/local.db
+server/node_modules
+project_plan.md
+implementation_plan.md
+task.md
+walkthrough.md

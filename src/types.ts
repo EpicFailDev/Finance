@@ -10,6 +10,7 @@ export enum Category {
 export enum TransactionType {
   INCOME = 'Entrada',
   EXPENSE = 'Saída',
+  INVESTMENT = 'Investimento',
 }
 
 export enum PaymentMethod {
@@ -35,4 +36,12 @@ export interface DashboardStats {
   totalIncome: number;
   totalExpense: number;
   balance: number;
+}
+
+export interface Budget {
+  id: string;
+  category: Category;
+  limit: number;
+  currentAmount: number;
+  month: string;
 }

@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "build": "npm install && vite build && cd server && npm install && npm run build",
+    "preview": "vite preview",
+    "start": "cd server && npm start"
   },
   "dependencies": {
     "@google/genai": "^1.38.0",
