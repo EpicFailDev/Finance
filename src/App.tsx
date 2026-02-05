@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Transaction, Budget, TransactionType } from './types';
 import { transactionsApi, budgetsApi } from './services/api';
 import TransactionForm from './components/TransactionForm';
@@ -9,7 +9,8 @@ import BudgetForm from './components/BudgetForm';
 import SettingsModal from './components/SettingsModal';
 import BudgetSection from './components/BudgetSection';
 import ReportsSection from './components/ReportsSection';
-import { LayoutDashboard, Wallet, Import, Loader2, PiggyBank, BarChart3, ChevronRight, Plus } from 'lucide-react';
+import MonthSelector from './components/MonthSelector';
+import { Wallet, Loader2, Plus } from 'lucide-react';
 
 const getCurrentMonth = () => {
   const now = new Date();
@@ -26,7 +27,7 @@ const App: React.FC = () => {
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   
-  const currentMonth = getCurrentMonth();
+  const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
 
   const fetchTransactions = useCallback(async () => {
     try {
@@ -40,12 +41,12 @@ const App: React.FC = () => {
 
   const fetchBudgets = useCallback(async () => {
     try {
-      const data = await budgetsApi.getByMonth(currentMonth);
+      const data = await budgetsApi.getByMonth(selectedMonth);
       setBudgets(data as Budget[]);
     } catch (err) {
       console.error('Failed to fetch budgets:', err);
     }
-  }, [currentMonth]);
+  }, [selectedMonth]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -61,6 +62,11 @@ const App: React.FC = () => {
     };
     loadData();
   }, [fetchTransactions, fetchBudgets]);
+
+  // Filter transactions by selected month locally
+  const filteredTransactions = useMemo(() => {
+    return transactions.filter(t => t.date.startsWith(selectedMonth));
+  }, [transactions, selectedMonth]);
 
   const handleAddTransaction = async (newTx: Omit<Transaction, 'id'>) => {
     try {
@@ -159,8 +165,8 @@ const App: React.FC = () => {
     <div className="min-h-screen pb-32">
       
       {/* Header Solaris Premium - SOLID & BRIGHT */}
-      <header className="sticky top-0 z-50 bg-white dark:bg-zen-950 border-b border-stone-100 dark:border-stone-800 px-4 sm:px-8 py-5 flex items-center justify-between shadow-sm">
-        <div className="flex items-center gap-4 group cursor-pointer" onClick={() => setIsSettingsOpen(true)}>
+      <header className="sticky top-0 z-50 bg-white dark:bg-zen-950 border-b border-stone-100 dark:border-stone-800 px-4 sm:px-8 py-5 flex flex-col sm:flex-row items-center justify-between shadow-sm gap-4 sm:gap-0">
+        <div className="flex items-center gap-4 group cursor-pointer self-start sm:self-auto" onClick={() => setIsSettingsOpen(true)}>
           <button className="w-12 h-12 bg-[#2563EB] flex items-center justify-center text-white rounded-2xl shadow-[0_15px_30px_-8px_rgba(37,99,235,0.4)] group-hover:scale-105 group-hover:rotate-3 transition-all duration-300 ring-4 ring-blue-50">
             <Wallet size={24} strokeWidth={2.5} />
           </button>
@@ -170,30 +176,36 @@ const App: React.FC = () => {
             </h1>
             <div className="flex items-center gap-2">
               <div className="w-1.5 h-1.5 bg-[#10B981] rounded-full animate-pulse"></div>
-              <span className="text-[10px] font-black text-stone-400 uppercase tracking-widest leading-none">Status: Solaris Premium • {currentMonth}</span>
+              <span className="text-[10px] font-black text-stone-400 uppercase tracking-widest leading-none">Status: Solaris Premium</span>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-4 h-full">
+        <div className="flex items-center gap-2 sm:gap-4 h-full w-full sm:w-auto justify-end">
+            <MonthSelector 
+              currentMonth={selectedMonth}
+              onMonthChange={setSelectedMonth}
+            />
+
             <button 
               onClick={() => setIsImportModalOpen(true)}
-              className="btn-vibrant flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 bg-white dark:bg-zen-900 border-2 border-[#8A05BE] font-black text-[10px] sm:text-xs uppercase tracking-widest text-[#8A05BE] dark:text-[#A855F7] hover:text-white hover:bg-[#8A05BE] transition-all rounded-full group shadow-md"
+              className="btn-vibrant flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-2.5 bg-white dark:bg-zen-900 border-2 border-[#8A05BE] font-black text-[10px] sm:text-xs uppercase tracking-widest text-[#8A05BE] dark:text-[#A855F7] hover:text-white hover:bg-[#8A05BE] transition-all rounded-full group shadow-md"
+              title="Importar Nubank"
             >
               <img 
                 src="https://upload.wikimedia.org/wikipedia/commons/f/f7/Nubank_logo_2021.svg" 
                 alt="Nubank" 
                 className="w-4 h-4 sm:w-5 sm:h-5 transition-all group-hover:brightness-0 group-hover:invert"
               />
-              <span className="hidden xs:inline">Importar Nubank</span>
+              <span className="hidden lg:inline">Importar</span>
             </button>
 
             <button 
               onClick={() => setIsTransactionFormOpen(true)}
-              className="hidden lg:flex items-center gap-3 px-7 py-3.5 bg-[#2563EB] text-white font-black text-xs uppercase tracking-[0.15em] rounded-full shadow-[0_15px_40px_-10px_rgba(37,99,235,0.6)] active:scale-95 hover:translate-y-[-2px] hover:bg-[#1d4ed8] transition-all border-2 border-white/20"
+              className="hidden lg:flex items-center gap-3 px-5 py-2.5 bg-[#2563EB] text-white font-black text-xs uppercase tracking-[0.15em] rounded-full shadow-[0_15px_40px_-10px_rgba(37,99,235,0.6)] active:scale-95 hover:translate-y-[-2px] hover:bg-[#1d4ed8] transition-all border-2 border-white/20"
             >
               <Plus size={18} strokeWidth={3} />
-              Novo Lançamento
+              Novo
             </button>
         </div>
       </header>
@@ -225,7 +237,7 @@ const App: React.FC = () => {
                 <div className="w-2 h-8 bg-accent-blue shadow-vibrant-blue"></div>
                 <h2 className="text-2xl font-bold tracking-tighter text-zen-900 dark:text-zen-100">Dashboard</h2>
               </div>
-              <Stats transactions={transactions} budgets={budgets} />
+              <Stats transactions={filteredTransactions} budgets={budgets} />
             </section>
 
             {/* Layer 2: Analysis & Budgets */}
@@ -239,9 +251,9 @@ const App: React.FC = () => {
                 </div>
                 <div className="kinetic-card p-1 sm:p-2 bg-stone-50 dark:bg-zen-900 dark:border-stone-800 overflow-hidden">
                   <ReportsSection 
-                    transactions={transactions}
+                    transactions={filteredTransactions}
                     budgets={budgets}
-                    currentMonth={currentMonth}
+                    currentMonth={selectedMonth}
                   />
                 </div>
               </div>
@@ -254,7 +266,7 @@ const App: React.FC = () => {
                 </div>
                 <div className="space-y-6">
                   <BudgetForm 
-                    currentMonth={currentMonth}
+                    currentMonth={selectedMonth}
                     onSave={handleSaveBudget}
                     existingBudgets={budgets}
                   />
@@ -276,7 +288,7 @@ const App: React.FC = () => {
               
               <div className="w-full h-full">
                 <TransactionList 
-                  transactions={transactions} 
+                  transactions={filteredTransactions} 
                   onDelete={handleDeleteTransaction}
                   onEdit={(t) => {
                     setEditingTransaction(t);
